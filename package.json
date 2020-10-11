@@ -1,0 +1,21 @@
+{
+  "name": "open-image-resizer-public-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "http": "0.0.1-security",
+    "node-fetch": "^2.6.1",
+    "resize-img": "^2.0.0",
+    "sha1": "^1.1.1",
+    "util": "^0.12.3"
+  }
+}
