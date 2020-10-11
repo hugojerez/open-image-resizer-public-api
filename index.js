@@ -12,8 +12,8 @@ const writeFilePromise = promisify(fs.writeFile)
 app.get("*", async (req, res) => {
 	const params = req.originalUrl.split("/")
 	if (params.length > 3) {
-		const width = Number( params[1])
-		const height =Number( params[2])
+		const width = Number(params[1]) ? Number(params[1]) : undefined
+		const height = Number(params[2]) ? Number(params[2]) : undefined
 		const url = params.slice(3).join("/")
         
 		const  image=await	procesarImagen(url, { width, height })
@@ -25,8 +25,7 @@ app.get("*", async (req, res) => {
 		
 	}
 	else {
-		
-		res.end("xd")
+		res.end("Invalid parameters")
 	}
 
 })
@@ -39,21 +38,31 @@ app.listen(port, () => {
 const procesarImagen = (url, { width, height }) => {
 	return new Promise((resolve, reject) => {
 		
-		const hash = sha1(url)
-		const fileName = "cache/"+hash+".jpg"
-		fetch(url)
-			.then(x => x.arrayBuffer())
-			.then(x => writeFilePromise(fileName, Buffer.from(x)))
-			.then(async () => {
-				const image = await resizeImg(fs.readFileSync(fileName), {
-					width,
-					height
+		const hash = sha1(JSON.stringify({ url, width, height }))
+		const fileName = "cache/" + hash + ".jpg"
+		const outputFile = "resized/"+hash+".jpg"
+		
+		if (fs.existsSync(outputFile))
+		{
+			
+			resolve(outputFile)
+		}
+
+		else {
+			
+			fetch(url)
+				.then(x => x.arrayBuffer())
+				.then(x => writeFilePromise(fileName, Buffer.from(x)))
+				.then(async () => {
+					const image = await resizeImg(fs.readFileSync(fileName), {
+						width,
+						height
+					})
+					fs.writeFileSync(outputFile, image)
+					fs.unlink(fileName, () => { })
+					resolve(outputFile)
 				})
-				const outputFile = "resized/"+hash+".jpg"
-				fs.writeFileSync(outputFile, image)
-				fs.unlink(fileName, () => { })
-				resolve(outputFile)
-			})
+		}
 		
 	})
 }
