@@ -19,5 +19,10 @@
     "sha1": "^1.1.1",
     "sharp": "^0.26.1",
     "util": "^0.12.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1"
   }
 }
