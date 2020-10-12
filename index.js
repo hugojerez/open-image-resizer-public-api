@@ -7,6 +7,9 @@ const resizeImg = require("resize-img")
 const express = require("express")
 const app = express()
 const port = process.env.PORT || 3000
+fs.mkdirSync(path.resolve(__dirname,"cache"), { recursive: true } )
+fs.mkdirSync(path.resolve(__dirname,"resized"), { recursive: true } )
+
 
 app.get("*", async (req, res) => {
 	const params = req.originalUrl.split("/")
