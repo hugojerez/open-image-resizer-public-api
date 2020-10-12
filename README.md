@@ -1,4 +1,4 @@
-# Open image resizer public api
+# Open Image Resizer Public Api
 
 
 open-image-resizer-public-api.herokuapp.com
@@ -8,7 +8,7 @@ open-image-resizer-public-api.herokuapp.com
 
 Url scheme
 
-    https://open-image-resizer-public-api.herokuapp.com/WIDTH/HEIGHT/URL
+    https://open-image-resizer-public-api.herokuapp.com / WIDTH / HEIGHT / URL
 
 Example 
 
