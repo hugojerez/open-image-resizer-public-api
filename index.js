@@ -3,7 +3,7 @@ const fetch = require("node-fetch")
 const path = require("path")
 const sha1 = require("sha1")
 const fs = require("fs")
-const resizeImg = require("resize-img")
+const sharp = require("sharp")
 const express = require("express")
 const app = express()
 const port = process.env.PORT || 3000
@@ -56,13 +56,22 @@ const procesarImagen = (url, { width, height }) => {
 				.then(x => x.arrayBuffer())
 				.then(x => fs.writeFileSync(path.resolve(  __dirname , fileName), Buffer.from(x)))
 				.then(async () => {
-					const image = await resizeImg(fs.readFileSync(path.resolve(  __dirname , fileName)), {
-						width,
-						height
-					})
-					fs.writeFileSync(path.resolve(  __dirname , outputFile), image)
-					fs.unlink(path.resolve(  __dirname , fileName), () => { })
-					resolve(outputFile)
+
+					sharp(path.resolve(__dirname, fileName))
+						.resize(width, height, {
+							kernel:"nearest"
+						})
+						.toFile(path.resolve(__dirname,outputFile), (err, info) => {
+							if (err) {
+								reject(err)
+							}
+							else {
+								resolve(outputFile)
+							}
+							
+							fs.unlink(path.resolve(__dirname, fileName), () => { })
+						})
+				
 				})
 		}
 		
