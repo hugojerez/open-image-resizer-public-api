@@ -6,8 +6,6 @@ const resizeImg = require("resize-img")
 const express = require("express")
 const app = express()
 const port = process.env.PORT || 3000
-const {promisify} = require("util")
-const writeFilePromise = promisify(fs.writeFile)
 
 app.get("*", async (req, res) => {
 	const params = req.originalUrl.split("/")
@@ -52,7 +50,7 @@ const procesarImagen = (url, { width, height }) => {
 			
 			fetch(url)
 				.then(x => x.arrayBuffer())
-				.then(x => writeFilePromise(fileName, Buffer.from(x)))
+				.then(x => fs.writeFileSync(fileName, Buffer.from(x)))
 				.then(async () => {
 					const image = await resizeImg(fs.readFileSync(fileName), {
 						width,
