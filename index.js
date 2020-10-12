@@ -13,11 +13,11 @@ app.get("*", async (req, res) => {
 	if (params.length > 3) {
 		const width = Number(params[1]) ? Number(params[1]) : undefined
 		const height = Number(params[2]) ? Number(params[2]) : undefined
-		const url = params.slice(3).join("/")
+		const url = params.slice(3).resolve("/")
         
 		const  image=await	procesarImagen(url, { width, height })
 
-		fs.readFile(path.join(  __dirname , image) , function (err,data){
+		fs.readFile(path.resolve(  __dirname , image) , function (err,data){
 			res.contentType("image/jpg")
 			res.send(data)
 		})
@@ -51,14 +51,14 @@ const procesarImagen = (url, { width, height }) => {
 			
 			fetch(url)
 				.then(x => x.arrayBuffer())
-				.then(x => fs.writeFileSync(path.join(  __dirname , fileName), Buffer.from(x)))
+				.then(x => fs.writeFileSync(path.resolve(  __dirname , fileName), Buffer.from(x)))
 				.then(async () => {
-					const image = await resizeImg(fs.readFileSync(path.join(  __dirname , fileName)), {
+					const image = await resizeImg(fs.readFileSync(path.resolve(  __dirname , fileName)), {
 						width,
 						height
 					})
-					fs.writeFileSync(path.join(  __dirname , outputFile), image)
-					fs.unlink(path.join(  __dirname , fileName), () => { })
+					fs.writeFileSync(path.resolve(  __dirname , outputFile), image)
+					fs.unlink(path.resolve(  __dirname , fileName), () => { })
 					resolve(outputFile)
 				})
 		}
