@@ -1,5 +1,6 @@
 const fetch = require("node-fetch")
 
+const path = require("path")
 const sha1 = require("sha1")
 const fs = require("fs")
 const resizeImg = require("resize-img")
@@ -16,7 +17,7 @@ app.get("*", async (req, res) => {
         
 		const  image=await	procesarImagen(url, { width, height })
 
-		fs.readFile(image , function (err,data){
+		fs.readFile(path.join(  __dirname , image) , function (err,data){
 			res.contentType("image/jpg")
 			res.send(data)
 		})
@@ -50,14 +51,14 @@ const procesarImagen = (url, { width, height }) => {
 			
 			fetch(url)
 				.then(x => x.arrayBuffer())
-				.then(x => fs.writeFileSync(fileName, Buffer.from(x)))
+				.then(x => fs.writeFileSync(path.join(  __dirname , fileName), Buffer.from(x)))
 				.then(async () => {
-					const image = await resizeImg(fs.readFileSync(fileName), {
+					const image = await resizeImg(fs.readFileSync(path.join(  __dirname , fileName)), {
 						width,
 						height
 					})
-					fs.writeFileSync(outputFile, image)
-					fs.unlink(fileName, () => { })
+					fs.writeFileSync(path.join(  __dirname , outputFile), image)
+					fs.unlink(path.join(  __dirname , fileName), () => { })
 					resolve(outputFile)
 				})
 		}
