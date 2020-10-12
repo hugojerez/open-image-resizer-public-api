@@ -13,7 +13,7 @@ app.get("*", async (req, res) => {
 	if (params.length > 3) {
 		const width = Number(params[1]) ? Number(params[1]) : undefined
 		const height = Number(params[2]) ? Number(params[2]) : undefined
-		const url = params.slice(3).resolve("/")
+		const url = params.slice(3).join("/")
         
 		const  image=await	procesarImagen(url, { width, height })
 
