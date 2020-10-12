@@ -59,7 +59,7 @@ const procesarImagen = (url, { width, height }) => {
 
 					sharp(path.resolve(__dirname, fileName))
 						.resize(width, height, {
-							kernel:"nearest"
+							kernel:"cubic"
 						})
 						.toFile(path.resolve(__dirname,outputFile), (err, info) => {
 							if (err) {
