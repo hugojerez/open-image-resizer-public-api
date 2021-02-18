@@ -4,14 +4,42 @@ const sha1 = require('sha1');
 const fs = require('fs');
 const sharp = require('sharp');
 const express = require('express');
-var cors = require('cors')
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 fs.mkdirSync(path.resolve(__dirname, 'cache'), { recursive: true });
 fs.mkdirSync(path.resolve(__dirname, 'resized'), { recursive: true });
-app.use(cors())
+const procesarImagen = (url, { width, height }) => new Promise((resolve, reject) => {
+  const hash = sha1(JSON.stringify({ url, width, height }));
+  const fileName = `cache/${hash}.jpg`;
+  const outputFile = `resized/${hash}.jpg`;
+
+  if (fs.existsSync(outputFile)) {
+    resolve(outputFile);
+  } else {
+    fetch(url)
+      .then((x) => x.arrayBuffer())
+      .then((x) => fs.writeFileSync(
+        path.resolve(__dirname, fileName), Buffer.from(x),
+      ))
+      .then(async () => {
+        sharp(path.resolve(__dirname, fileName))
+          .resize(width, height, {
+            kernel: 'cubic',
+          })
+          .toFile(path.resolve(__dirname, outputFile), (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(outputFile);
+            }
+
+            fs.unlink(path.resolve(__dirname, fileName), () => { });
+          });
+      });
+  }
+});
 
 app.get('*', async (req, res) => {
   const params = req.originalUrl.split('/');
@@ -33,35 +61,4 @@ app.get('*', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
-});
-
-const procesarImagen = (url, { width, height }) => new Promise((resolve, reject) => {
-  const hash = sha1(JSON.stringify({ url, width, height }));
-  const fileName = `cache/${hash}.jpg`;
-  const outputFile = `resized/${hash}.jpg`;
-
-  if (fs.existsSync(outputFile)) {
-    resolve(outputFile);
-  } else {
-    fetch(url)
-      .then((x) => x.arrayBuffer())
-      .then((x) => fs.writeFileSync(
-        path.resolve(__dirname, fileName), Buffer.from(x),
-      ))
-      .then(async () => {
-        sharp(path.resolve(__dirname, fileName))
-          .resize(width, height, {
-            kernel: 'cubic',
-          })
-          .toFile(path.resolve(__dirname, outputFile), (err, info) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(outputFile);
-            }
-
-            fs.unlink(path.resolve(__dirname, fileName), () => { });
-          });
-      });
-  }
 });
