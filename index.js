@@ -4,6 +4,7 @@ const sha1 = require('sha1');
 const fs = require('fs');
 const sharp = require('sharp');
 const express = require('express');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -40,7 +41,7 @@ const procesarImagen = (url, { width, height }) => new Promise((resolve, reject)
       });
   }
 });
-
+app.use(cors());
 app.get('*', async (req, res) => {
   const params = req.originalUrl.split('/');
   if (params.length > 3) {
